@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Ajouter une commande</title>
+    <style>
+        /* Base styles */
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --background: #f3f4f6;
+            --foreground: #1e293b;
+            --card: #ffffff;
+            --border: #e2e8f0;
+            --note-yellow: #fef3c7;
+            --note-shadow: rgba(0, 0, 0, 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(to bottom, var(--background), #e2e8f0);
+            color: var(--foreground);
+            min-height: 100vh;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            line-height: 1.6;
+        }
+
+        /* Blob animations */
+        .animated-blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.4;
+            mix-blend-mode: multiply;
+            animation: float 8s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        .blob-1 {
+            width: 400px;
+            height: 400px;
+            background-color: rgba(147, 197, 253, 0.4);
+            top: 0;
+            left: -120px;
+        }
+
+        .blob-2 {
+            width: 400px;
+            height: 400px;
+            background-color: rgba(252, 211, 77, 0.3);
+            bottom: 0;
+            right: 0;
+            animation-delay: 2s;
+        }
+
+        .blob-3 {
+            width: 300px;
+            height: 300px;
+            background-color: rgba(165, 180, 252, 0.3);
+            bottom: 80px;
+            left: 80px;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(5deg); }
+        }
+
+        /* Container */
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 2.5rem;
+            background-color: var(--card);
+            backdrop-filter: blur(10px);
+            border-radius: 0.75rem;
+            box-shadow: 
+                0 10px 25px var(--note-shadow),
+                0 0 0 1px rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            position: relative;
+            z-index: 1;
+            /* Effet papier */
+            background-image: 
+                linear-gradient(90deg, transparent 0%, transparent 99%, #e0e0e0 100%),
+                linear-gradient(#f8f8f8 0.1em, transparent 0.1em);
+            background-size: 100% 1.2em;
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+
+        /* Effet de "pin" en haut du bloc-notes */
+        .container::before {
+            content: "";
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
+            background-color: #f97316;
+            border-radius: 50%;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: -1;
+        }
+
+        /* Header styles */
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2.5rem;
+            border-bottom: 2px solid #f3f4f6;
+            padding-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--foreground);
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        h1::after {
+            content: "";
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background-color: var(--primary);
+            border-radius: 1px;
+        }
+
+        /* Form styles */
+        form {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background-color: var(--note-yellow);
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px var(--note-shadow);
+            transform: rotate(-1deg);
+            transition: transform 0.3s;
+        }
+
+        form:hover {
+            transform: rotate(0deg) scale(1.01);
+        }
+
+        label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--foreground);
+            letter-spacing: 0.02em;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 0.875rem 1.125rem;
+            border: 1.5px solid var(--border);
+            background-color: white;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: all 0.3s;
+            outline: none;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+            margin-bottom: 1.25rem;
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+        }
+
+        input[type="text"]:focus, textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+            transform: translateY(-2px);
+        }
+
+        button[type="submit"] {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.875rem 1.75rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(79, 70, 229, 0.2);
+        }
+
+        button[type="submit"]:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(79, 70, 229, 0.25);
+        }
+
+        button[type="submit"]:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(79, 70, 229, 0.2);
+        }
+
+        /* Link styles */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--foreground);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.3s;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.5rem;
+        }
+
+        .back-link:hover {
+            color: var(--primary);
+            background-color: rgba(79, 70, 229, 0.05);
+            transform: translateX(-4px);
+        }
+
+        /* Responsive styles */
+        @media (max-width: 640px) {
+            body {
+                padding: 1rem;
+            }
+            
+            .container {
+                padding: 1.5rem;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            form {
+                padding: 1.25rem;
+            }
+        }
+
+        /* Animation d'apparition */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background blobs -->
+    <div class="animated-blob blob-1"></div>
+    <div class="animated-blob blob-2"></div>
+    <div class="animated-blob blob-3"></div>
+    
+    <div class="container">
+        <h1>Ajouter une commande à : {{ category.title }}</h1>
+        
+        <form method="post">
+            {% csrf_token %}
+            <label for="title">Titre :</label>
+            <input type="text" id="title" name="title" required>
+            
+            <label for="content">Commande :</label>
+            <textarea id="content" name="content" rows="5" required></textarea>
+            
+            <button type="submit">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 12h14"></path>
+                    <path d="M12 5l7 7-7 7"></path>
+                </svg>
+                Ajouter
+            </button>
+        </form>
+        
+        <a href="{% url 'category_detail' category.id %}" class="back-link">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 12H5"></path>
+                <path d="M12 19l-7-7 7-7"></path>
+            </svg>
+            Retour
+        </a>
+    </div>
+</body>
+</html>

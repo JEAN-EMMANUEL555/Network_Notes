@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Supprimer la commande</title>
+    <style>
+        /* Base styles */
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --background: #f3f4f6;
+            --foreground: #1e293b;
+            --card: #ffffff;
+            --border: #e2e8f0;
+            --note-yellow: #fef3c7;
+            --note-shadow: rgba(0, 0, 0, 0.05);
+            --danger: #ef4444;
+            --danger-hover: #dc2626;
+            --warning-bg: #fee2e2;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(to bottom, var(--background), #e2e8f0);
+            color: var(--foreground);
+            min-height: 100vh;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            line-height: 1.6;
+        }
+
+        /* Blob animations */
+        .animated-blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.4;
+            mix-blend-mode: multiply;
+            animation: float 8s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        .blob-1 {
+            width: 400px;
+            height: 400px;
+            background-color: rgba(239, 68, 68, 0.2);
+            top: 0;
+            left: -120px;
+        }
+
+        .blob-2 {
+            width: 400px;
+            height: 400px;
+            background-color: rgba(252, 211, 77, 0.3);
+            bottom: 0;
+            right: 0;
+            animation-delay: 2s;
+        }
+
+        .blob-3 {
+            width: 300px;
+            height: 300px;
+            background-color: rgba(239, 68, 68, 0.2);
+            bottom: 80px;
+            left: 80px;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(5deg); }
+        }
+
+        /* Container */
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 2.5rem;
+            background-color: var(--card);
+            backdrop-filter: blur(10px);
+            border-radius: 0.75rem;
+            box-shadow: 
+                0 10px 25px var(--note-shadow),
+                0 0 0 1px rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            position: relative;
+            z-index: 1;
+            /* Effet papier */
+            background-image: 
+                linear-gradient(90deg, transparent 0%, transparent 99%, #e0e0e0 100%),
+                linear-gradient(#f8f8f8 0.1em, transparent 0.1em);
+            background-size: 100% 1.2em;
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+
+        /* Effet de "pin" en haut du bloc-notes */
+        .container::before {
+            content: "";
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
+            background-color: var(--danger);
+            border-radius: 50%;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: -1;
+        }
+
+        /* Header styles */
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--foreground);
+            position: relative;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f3f4f6;
+        }
+
+        h1::after {
+            content: "";
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background-color: var(--danger);
+            border-radius: 1px;
+        }
+
+        /* Warning message */
+        .warning-message {
+            margin-bottom: 2rem;
+            padding: 1rem 1.5rem;
+            background-color: var(--warning-bg);
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px var(--note-shadow);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 500;
+            color: #991b1b;
+            transform: rotate(-1deg);
+            transition: transform 0.3s;
+            border-left: 4px solid var(--danger);
+        }
+
+        .warning-message:hover {
+            transform: rotate(0deg) scale(1.01);
+        }
+
+        /* Form styles */
+        form {
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .danger-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            background-color: var(--danger);
+            color: white;
+            border: none;
+            padding: 0.875rem 1.75rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(239, 68, 68, 0.2);
+        }
+
+        .danger-button:hover {
+            background-color: var(--danger-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(239, 68, 68, 0.25);
+        }
+
+        .danger-button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(239, 68, 68, 0.2);
+        }
+
+        /* Link styles */
+        .cancel-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--foreground);
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s;
+            padding: 0.875rem 1.75rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border);
+            background-color: white;
+        }
+
+        .cancel-link:hover {
+            color: var(--primary);
+            background-color: rgba(79, 70, 229, 0.05);
+            transform: translateY(-2px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Responsive styles */
+        @media (max-width: 640px) {
+            body {
+                padding: 1rem;
+            }
+            
+            .container {
+                padding: 1.5rem;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            form {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .cancel-link {
+                text-align: center;
+            }
+        }
+
+        /* Animation d'apparition */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background blobs -->
+    <div class="animated-blob blob-1"></div>
+    <div class="animated-blob blob-2"></div>
+    <div class="animated-blob blob-3"></div>
+    
+    <div class="container">
+        <h1>Supprimer la commande : "{{ command.title }}"</h1>
+        
+        <div class="warning-message">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                <line x1="12" y1="9" x2="12" y2="13"></line>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            <p>⚠️ Es-tu sûr de vouloir supprimer cette commande ?</p>
+        </div>
+        
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="danger-button">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 6h18"></path>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    <line x1="10" y1="11" x2="10" y2="17"></line>
+                    <line x1="14" y1="11" x2="14" y2="17"></line>
+                </svg>
+                Oui, Supprimer
+            </button>
+            <a href="{% url 'category_detail' command.category.id %}" class="cancel-link">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M19 12H5"></path>
+                    <path d="M12 19l-7-7 7-7"></path>
+                </svg>
+                Annuler
+            </a>
+        </form>
+    </div>
+</body>
+</html>

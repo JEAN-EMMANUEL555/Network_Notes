@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mes Commandes Réseau</title>
+    <style>
+        /* Base styles */
+        :root {
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --secondary: #6366f1;
+            --background: #f0f5ff;
+            --foreground: #1e293b;
+            --card: #ffffff;
+            --border: #e2e8f0;
+            --error: #ef4444;
+            --success: #10b981;
+            --radius: 0.75rem;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, var(--background), #dbeafe);
+            color: var(--foreground);
+            min-height: 100vh;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            line-height: 1.6;
+        }
+
+        /* Blob animations */
+        .animated-blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(40px);
+            opacity: 0.5;
+            mix-blend-mode: multiply;
+            animation: float 8s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        .blob-1 {
+            width: 400px;
+            height: 400px;
+            background-color: rgba(147, 197, 253, 0.4);
+            top: 0;
+            left: -120px;
+        }
+
+        .blob-2 {
+            width: 400px;
+            height: 400px;
+            background-color: rgba(186, 230, 253, 0.3);
+            bottom: 0;
+            right: 0;
+            animation-delay: 2s;
+        }
+
+        .blob-3 {
+            width: 300px;
+            height: 300px;
+            background-color: rgba(165, 180, 252, 0.3);
+            bottom: 80px;
+            left: 80px;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(5deg); }
+        }
+
+        /* Animated background grid */
+        .grid-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(59, 130, 246, 0.05) 1px, transparent 1px), 
+                linear-gradient(90deg, rgba(59, 130, 246, 0.05) 1px, transparent 1px);
+            background-size: 20px 20px;
+            z-index: -2;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border-radius: var(--radius);
+            box-shadow: 
+                0 10px 25px rgba(0, 0, 0, 0.05),
+                0 0 0 1px rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            position: relative;
+            z-index: 1;
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Header styles */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+            position: relative;
+        }
+
+        .header::after {
+            content: "";
+            position: absolute;
+            bottom: -1rem;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+        }
+
+        .title-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-container {
+            display: inline-flex;
+            padding: 0.625rem;
+            background-color: rgba(59, 130, 246, 0.15);
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(59, 130, 246, 0.1);
+            transition: all 0.3s;
+        }
+
+        .logo-container:hover {
+            transform: rotate(5deg);
+            background-color: rgba(59, 130, 246, 0.2);
+        }
+
+        .logo {
+            width: 32px;
+            height: 32px;
+            color: var(--primary);
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--foreground);
+            margin: 0;
+            position: relative;
+        }
+
+        /* Actions bar */
+        .actions-bar {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.6rem 1.2rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            font-size: 0.875rem;
+            text-decoration: none;
+            transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--primary-hover), var(--secondary));
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-outline {
+            border: 1.5px solid var(--border);
+            color: var(--foreground);
+            background-color: white;
+        }
+
+        .btn-outline:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-icon {
+            margin-right: 0.5rem;
+        }
+
+        /* Cards grid */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .card-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            animation: fadeUp 0.5s ease-out forwards;
+            opacity: 0;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Apply staggered animation delays to cards */
+        .card-wrapper:nth-child(1) { animation-delay: 0.1s; }
+        .card-wrapper:nth-child(2) { animation-delay: 0.2s; }
+        .card-wrapper:nth-child(3) { animation-delay: 0.3s; }
+        .card-wrapper:nth-child(4) { animation-delay: 0.4s; }
+        .card-wrapper:nth-child(5) { animation-delay: 0.5s; }
+        .card-wrapper:nth-child(6) { animation-delay: 0.6s; }
+
+        .card {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            background-color: var(--card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+            transition: all 0.3s;
+            text-decoration: none;
+            color: var(--foreground);
+            height: 100%;
+            min-height: 180px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease-out;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.15);
+        }
+
+        .card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .card h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--foreground);
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .card:hover h2 {
+            color: var(--primary);
+        }
+
+        .card-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 64px;
+            height: 64px;
+            background-color: rgba(59, 130, 246, 0.1);
+            border-radius: 16px;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .card:hover .card-icon {
+            background-color: rgba(59, 130, 246, 0.2);
+            transform: rotate(5deg) scale(1.05);
+        }
+
+        .delete-link {
+            color: var(--error);
+            font-size: 0.875rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            transition: all 0.2s;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            margin-top: 0.25rem;
+        }
+
+        .delete-link:hover {
+            background-color: rgba(239, 68, 68, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* Empty state */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 2rem;
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: var(--radius);
+            border: 2px dashed var(--border);
+            animation: pulse 3s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        .empty-state-icon {
+            width: 80px;
+            height: 80px;
+            color: #94a3b8;
+            margin-bottom: 1.5rem;
+            opacity: 0.8;
+        }
+
+        .empty-state h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .empty-state p {
+            color: #64748b;
+            margin-bottom: 2rem;
+            max-width: 500px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem;
+            }
+            
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .cards {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 1rem;
+            }
+            
+            .container {
+                padding: 1rem;
+            }
+            
+            .cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background elements -->
+    <div class="grid-background"></div>
+    <div class="animated-blob blob-1"></div>
+    <div class="animated-blob blob-2"></div>
+    <div class="animated-blob blob-3"></div>
+    
+    <div class="container">
+        <header class="header">
+            <div class="title-container">
+                <div class="logo-container">
+                    <svg class="logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+                        <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+                        <line x1="6" y1="6" x2="6.01" y2="6"></line>
+                        <line x1="6" y1="18" x2="6.01" y2="18"></line>
+                        <path d="M12 6h4"></path>
+                        <path d="M12 18h4"></path>
+                    </svg>
+                </div>
+                <h1>Mes catégories de commandes réseau</h1>
+            </div>
+            
+            <div class="actions-bar">
+                <a href="{% url 'add_category' %}" class="btn btn-primary">
+                    <svg class="btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    Ajouter une catégorie
+                </a>
+            </div>
+        </header>
+
+        <!-- This div will be populated with categories or show an empty state -->
+        <div id="categories-container">
+            <div class="cards">
+                {% for category in categories %}
+                <div class="card-wrapper">
+                    <a href="{% url 'category_detail' category.id %}" class="card">
+                        <div class="card-icon">
+                            <!-- Icônes réseau informatique: choisir selon la catégorie -->
+                            {% if 'switch' in category.title.lower or 'commutateur' in category.title.lower %}
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+                                <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+                                <line x1="6" y1="6" x2="6.01" y2="6"></line>
+                                <line x1="10" y1="6" x2="10.01" y2="6"></line>
+                                <line x1="14" y1="6" x2="14.01" y2="6"></line>
+                                <line x1="18" y1="6" x2="18.01" y2="6"></line>
+                                <line x1="6" y1="18" x2="6.01" y2="18"></line>
+                                <line x1="10" y1="18" x2="10.01" y2="18"></line>
+                                <line x1="14" y1="18" x2="14.01" y2="18"></line>
+                                <line x1="18" y1="18" x2="18.01" y2="18"></line>
+                            </svg>
+                            {% elif 'router' in category.title.lower or 'routeur' in category.title.lower %}
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="2" y="9" width="20" height="6" rx="2" ry="2"></rect>
+                                <line x1="6" y1="12" x2="6.01" y2="12"></line>
+                                <line x1="10" y1="12" x2="10.01" y2="12"></line>
+                                <path d="M4 3h16"></path>
+                                <path d="M20 3v6"></path>
+                                <path d="M4 3v6"></path>
+                                <path d="M4 21h16"></path>
+                                <path d="M20 15v6"></path>
+                                <path d="M4 15v6"></path>
+                            </svg>
+                            {% elif 'serveur' in category.title.lower or 'server' in category.title.lower %}
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+                                <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+                                <line x1="6" y1="6" x2="6.01" y2="6"></line>
+                                <line x1="6" y1="18" x2="6.01" y2="18"></line>
+                                <line x1="10" y1="6" x2="20" y2="6"></line>
+                                <line x1="10" y1="18" x2="20" y2="18"></line>
+                            </svg>
+                            {% elif 'firewall' in category.title.lower or 'pare-feu' in category.title.lower %}
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M4 8a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H4z"></path>
+                                <path d="M20 8a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h4z"></path>
+                                <path d="M12 10V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v6"></path>
+                                <path d="M12 10v6a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-6"></path>
+                                <path d="M5 10h14v4H5z"></path>
+                                <path d="M18 16v4"></path>
+                                <path d="M6 16v4"></path>
+                            </svg>
+                            {% elif 'réseau' in category.title.lower or 'network' in category.title.lower %}
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="2" y1="12" x2="22" y2="12"></line>
+                                <line x1="12" y1="2" x2="12" y2="22"></line>
+                                <path d="M12 7a5 5 0 0 0-5 5"></path>
+                                <path d="M12 7a5 5 0 0 1 5 5"></path>
+                                <path d="M12 17a5 5 0 0 0 5-5"></path>
+                                <path d="M12 17a5 5 0 0 1-5-5"></path>
+                            </svg>
+                            {% elif 'wifi' in category.title.lower or 'sans fil' in category.title.lower %}
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M5 12.55a11 11 0 0 1 14.08 0"></path>
+                                <path d="M1.42 9a16 16 0 0 1 21.16 0"></path>
+                                <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+                                <circle cx="12" cy="20" r="1"></circle>
+                            </svg>
+                            {% elif 'vpn' in category.title.lower %}
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 12m-10 0a10 10 0 1 0 20 0a10 10 0 1 0 -20 0"></path>
+                                <path d="M12 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"></path>
+                                <path d="M5.5 5.5l3 3"></path>
+                                <path d="M15.5 15.5l3 3"></path>
+                                <path d="M5.5 15.5l3 -3"></path>
+                                <path d="M15.5 5.5l3 -3"></path>
+                            </svg>
+                            {% else %}
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M17 3a2.826 2.826 0 0 0-4 0L3 13l4 4L17 7a2.826 2.826 0 0 0 0-4z"></path>
+                                <path d="M13.5 9.5L17 13l4-4-3.5-3.5"></path>
+                                <path d="M3 13l-1 5 5-1"></path>
+                                <path d="M13.5 9.5L17 13l-3.5 3.5-3.5-3.5z"></path>
+                            </svg>
+                            {% endif %}
+                        </div>
+                        <h2>{{ category.title }}</h2>
+                    </a>
+                    <a href="{% url 'delete_category' category.id %}" class="delete-link">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px;">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                        Supprimer la catégorie
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <!-- Empty state (hidden by default, would be shown when no categories exist) -->
+            <div class="empty-state" style="display: none;">
+                <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect>
+                    <path d="M12 9v2"></path>
+                    <path d="M12 15h.01"></path>
+                    <path d="M6 9h4"></path>
+                    <path d="M14 9h4"></path>
+                    <path d="M6 15h4"></path>
+                    <path d="M14 15h4"></path>
+                </svg>
+                <h2>Aucune catégorie trouvée</h2>
+                <p>Commencez par créer une catégorie pour organiser vos commandes réseau et simplifier votre gestion d'infrastructure</p>
+                
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simple toggle for empty state demonstration
+        // In a real application, this would be handled by the template engine
+        document.addEventListener('DOMContentLoaded', function() {
+            // const toggleEmptyBtn = document.createElement('button');
+            toggleEmptyBtn.textContent = 'Toggle Empty State (Demo)';
+            toggleEmptyBtn.style.position = 'fixed';
+            toggleEmptyBtn.style.bottom = '20px';
+            toggleEmptyBtn.style.right = '20px';
+            toggleEmptyBtn.style.padding = '8px 16px';
+            toggleEmptyBtn.style.background = '#f1f5f9';
+            toggleEmptyBtn.style.border = '1px solid #cbd5e1';
+            toggleEmptyBtn.style.borderRadius = '4px';
+            toggleEmptyBtn.style.cursor = 'pointer';
+            
+            toggleEmptyBtn.addEventListener('click', function() {
+                const cardsContainer = document.querySelector('.cards');
+                const emptyState = document.querySelector('.empty-state');
+                
+                if (cardsContainer.style.display === 'none') {
+                    cardsContainer.style.display = 'grid';
+                    emptyState.style.display = 'none';
+                } else {
+                    cardsContainer.style.display = 'none';
+                    emptyState.style.display = 'flex';
+                }
+            });
+            
+            document.body.appendChild(toggleEmptyBtn);
+        });
+    </script>
+</body>
+</html>
